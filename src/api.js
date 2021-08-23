@@ -102,7 +102,7 @@ function _setIndex(obj){
     }
 
     if(network == 'centrifuge'){
-        index = obj.data.list.findIndex(x => transformDDMMYYYtoUnix(x.day) > 1568851200);
+        index = obj.data.list.findIndex(x => transformDDMMYYYtoUnix(x.day) >= 1629417600);
     }
 
     if(index < 0){
