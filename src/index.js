@@ -9,11 +9,11 @@ async function main () {
 
   let numberPayouts = {
     "DOT": 0,
-    "KSM": 0,
+    "CFG": 0,
   }
   let totalStaked = {
     "DOT": 0,
-    "KSM": 0,
+    "CFG": 0,
   }
 
   let totalFiat = 0;
@@ -24,7 +24,7 @@ async function main () {
     userInput = verifyUserInput(userInput, network);
     let start = userInput.start;
     let end = userInput.end;
-    
+
     let address = userInput.addresses[i].address;
     let currency = userInput.currency;
     let exportOutput = userInput.exportOutput;
@@ -32,14 +32,14 @@ async function main () {
     let startBalance = userInput.addresses[i].startBalance;
 
     obj = await gatherData(start, end, network, address, currency, priceData, startBalance);
-    
+
     // otherwise there were no rewards
     if(obj.data.numberRewardsParsed > 0){
       obj = calculateMetrics(obj);
     }
 
-    if(exportOutput == "true" & obj.message != 'No rewards found for this address'){ 
-      exportVariable(JSON.stringify(obj), userInput.addresses[i].name + ' ' + obj.address + '.json'); 
+    if(exportOutput == "true" & obj.message != 'No rewards found for this address'){
+      exportVariable(JSON.stringify(obj), userInput.addresses[i].name + ' ' + obj.address + '.json');
       writeCSV(obj, userInput.addresses[i].name + ' ' + obj.address + '.csv');
     }
 
@@ -49,12 +49,12 @@ async function main () {
       totalStaked.DOT = totalStaked.DOT + obj.totalAmountHumanReadable;
       numberPayouts.DOT = numberPayouts.DOT + obj.data.numberRewardsParsed;
     } else {
-      numberPayouts.KSM = numberPayouts.KSM + obj.data.numberRewardsParsed;
-      totalStaked.KSM = totalStaked.KSM + obj.totalAmountHumanReadable;
+      numberPayouts.CFG = numberPayouts.CFG + obj.data.numberRewardsParsed;
+      totalStaked.CFG = totalStaked.CFG + obj.totalAmountHumanReadable;
     }
   }
-    console.log('In total, ' + numberPayouts.DOT + ' DOT and ' + numberPayouts.KSM + ' KSM payouts were found.');
-    console.log('The sum of staking rewards are ' + totalStaked.DOT +  ' DOT and ' + totalStaked.KSM + ' KSM' + ', which sums up to a total of ' + totalFiat + ' ' + obj.currency + ' (based on daily prices)');
-    console.log('For more information, open the CSV file(s) or copy the content of the JSON file(s) into http://jsonviewer.stack.hu/ (click format).'); 
+    console.log('In total, ' + numberPayouts.DOT + ' DOT and ' + numberPayouts.CFG + ' CFG payouts were found.');
+    console.log('The sum of staking rewards are ' + totalStaked.DOT +  ' DOT and ' + totalStaked.CFG + ' CFG' + ', which sums up to a total of ' + totalFiat + ' ' + obj.currency + ' (based on daily prices)');
+    console.log('For more information, open the CSV file(s) or copy the content of the JSON file(s) into http://jsonviewer.stack.hu/ (click format).');
 }
 main().catch(console.error).finally(() => process.exit());

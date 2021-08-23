@@ -17,10 +17,17 @@ export async function addPriceData(obj){
     let i = _setIndex(obj);
 
     for(i;i<obj.data.list.length;i++){
-        
-        let tmp = transformDDMMYYYtoUnix(obj.data.list[i].day);               
-        obj.data.list[i].price = round(prices.find(x => x.timestamp == tmp).price,2);
-        obj.data.list[i].volume = total_volume.find(x => x.timestamp == tmp).volume;
+        let tmp = transformDDMMYYYtoUnix(obj.data.list[i].day);
+        let p = prices.find(x => x.timestamp == tmp)
+        if (p !== undefined && p.hasOwnProperty("price")){
+            obj.data.list[i].price = round(p.price,2);
+        }
+
+        let v = total_volume.find(x => x.timestamp == tmp)
+        if (v !== undefined && v.hasOwnProperty("volume")){
+            obj.data.list[i].volume = v.volume;
+        }
+
     }
     return obj;
 }
@@ -34,7 +41,7 @@ async function _getPriceObject(obj){
 
     // Avoid getting hourly or minute price data.
     end = _checkDuration(start, end);
-    
+
         try{
             priceObject = await CoinGeckoClient.coins.fetchMarketChartRange(obj.network, {
                 from: start,
@@ -66,7 +73,7 @@ function _arrayToObject(array, key){
 
 /*
 This function checks if the user did input a time-period larger than 90 days. Minutely data will be provided for for duration within 1 day and  Hourly data will be used for duration between 1 day and 90 days. We are only interested in daily data, so we check if the duration is less than 90 days and then just increase it artificially (only the prices within the time-period of the user will be used later).
-*/ 
+*/
 
 function _checkDuration(start, end){
     var setEnd;
@@ -94,7 +101,7 @@ function _setIndex(obj){
         index = obj.data.list.findIndex(x => transformDDMMYYYtoUnix(x.day) > 1597708800);
     }
 
-    if(network == 'kusama'){
+    if(network == 'centrifuge'){
         index = obj.data.list.findIndex(x => transformDDMMYYYtoUnix(x.day) > 1568851200);
     }
 
